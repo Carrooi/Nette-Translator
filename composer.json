@@ -1,0 +1,28 @@
+{
+    "name": "sakren/nette-translator",
+	"type": "library",
+	"description": "Translator for Nette framework",
+	"keywords": ["translator", "localization", "i18n", "nette"],
+	"homepage": "https://github.com/sakren/php-nette-translator",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "David Kudera",
+			"email": "sakren@gmail.com",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0",
+		"nette/nette": ">=v2.0.0",
+		"sakren/translator": "*"
+	},
+	"require-dev": {
+		"nette/tester": "@dev"
+	},
+	"autoload": {
+		"psr-0": {
+			"DK\\NetteTranslator": "src/"
+		}
+	}
+}
