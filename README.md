@@ -31,5 +31,8 @@ $translator->setCache($myOwnInstanceOfCache);
 
 ## Changelog
 
+* 1.0.1
+	+ Just some typo
+
 * 1.0.0
 	+ First version
