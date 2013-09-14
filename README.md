@@ -4,6 +4,14 @@ This translator is just extended version of [sakren/translator](https://github.c
 
 For full documentation, look [here](https://github.com/sakren/php-translator/blob/master/README.md).
 
+## Installation
+
+Preferred way is to install via [composer](http://getcomposer.org/).
+
+```
+php composer.phar require sakren/nette-translator
+```
+
 ## Usage
 
 ```
@@ -30,6 +38,9 @@ $translator->setCache($myOwnInstanceOfCache);
 ```
 
 ## Changelog
+
+* 1.0.2
+	+ Info about installation
 
 * 1.0.1
 	+ Just some typo
