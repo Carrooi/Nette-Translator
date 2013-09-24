@@ -39,6 +39,9 @@ $translator->setCache($myOwnInstanceOfCache);
 
 ## Changelog
 
+* 1.0.3
+	+ Updated base translator
+
 * 1.0.2
 	+ Info about installation
 
