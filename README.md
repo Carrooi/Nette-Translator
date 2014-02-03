@@ -43,6 +43,12 @@ $translator->setCache($myOwnInstanceOfCache);
 
 ## Changelog
 
+* 1.1.0
+	+ See changelog of [php-translator]() to see rest of changes (https://github.com/sakren/php-translator#changelog) (version 1.5.0 - 1.6.1)
+	+ Updated dependencies
+	+ Tests were not working in clean installation
+	+ Updates because of base translator
+
 * 1.0.3
 	+ Updated base translator
 
