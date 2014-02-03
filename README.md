@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/sakren/nette-translator.png?branch=master)](https://travis-ci.org/sakren/nette-translator)
+
+[![Donate](http://b.repl.ca/v1/donate-PayPal-brightgreen.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S3EYEQST8ZD5Y)
+
 # nette-translator
 
 This translator is just extended version of [sakren/translator](https://github.com/sakren/php-translator) for Nette framework.
