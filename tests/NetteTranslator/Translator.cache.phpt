@@ -9,6 +9,7 @@
 
 namespace DKTests\NetteTranslator;
 
+use Tester\Environment;
 use Tester\TestCase;
 use Tester\Assert;
 use DK\NetteTranslator\Translator;
@@ -29,6 +30,11 @@ class TranslatorCacheTest extends TestCase
 	/** @var \DK\NetteTranslator\Translator */
 	private $translator;
 
+	/** @var array  */
+	private $files = array(
+		'../data/web/pages/homepage/en.simple.json' => null
+	);
+
 
 	protected function setUp()
 	{
@@ -37,6 +43,10 @@ class TranslatorCacheTest extends TestCase
 		$this->translator = new Translator(__DIR__. '/../data');
 		$this->translator->setLanguage('en');
 		$this->translator->setCacheStorage($storage);
+
+		foreach ($this->files as $path =>  &$data) {
+			$data = file_get_contents(__DIR__. '/'. $path);
+		}
 	}
 
 
@@ -47,7 +57,9 @@ class TranslatorCacheTest extends TestCase
 			$cache->clean(array(Cache::ALL));
 		}
 
-		file_put_contents(__DIR__. '/../data/web/pages/homepage/en.cached.json', '{"# version #": 1, "variable": "1"}');
+		foreach ($this->files as $path => $data) {
+			file_put_contents(__DIR__. '/'. $path, $data);
+		}
 	}
 
 	public function testSetCache()
@@ -60,7 +72,7 @@ class TranslatorCacheTest extends TestCase
 	public function testTranslate()
 	{
 		$this->translator->translate('web.pages.homepage.promo.title');
-		$t = $this->translator->getCache()->load('en:web/pages/homepage/promo');
+		$t = $this->translator->getCache()->load($this->translator->_getCachedCategoryName('web/pages/homepage', 'promo', 'en'));
 		Assert::type('array', $t);
 		Assert::true(isset($t['title']));
 	}
@@ -76,41 +88,17 @@ class TranslatorCacheTest extends TestCase
 
 	public function testInvalidateOnChange()
 	{
+		Environment::skip();		// @todo
+
+		Assert::same('Title of promo box', $this->translator->translate('web.pages.homepage.simple.title'));
+
 		$path = __DIR__. '/../data/web/pages/homepage/en.simple.json';
-		$data = file_get_contents($path);
-		$this->translator->translate('web.pages.homepage.simple.title');
-		file_put_contents($path, $data);
+		file_put_contents($path, '{"title": "New title"}');
+
 		$this->translator->getCache()->release();
-		Assert::null($this->translator->getCache()->load('en:web/pages/homepage/simple'));
-	}
-
-
-	public function testTranslate_withVersion()
-	{
-		$t = $this->translator->translate('web.pages.homepage.cached.variable');
-		Assert::same('1', $t);
-	}
-
-
-	public function testTranslate_withVersionLoadOld()
-	{
-		$this->translator->translate('web.pages.homepage.cached.variable');
-		$path = __DIR__. '/../data/web/pages/homepage/en.cached.json';
-		file_put_contents($path, '{"# version #": 1, "variable": "2"}');
 		$this->translator->invalidate();
-		$t = $this->translator->translate('web.pages.homepage.cached.variable');
-		Assert::same('1', $t);
-	}
 
-
-	public function testTranslate_withVersionLoadNew()
-	{
-		$this->translator->translate('web.pages.homepage.cached.variable');
-		$path = __DIR__. '/../data/web/pages/homepage/en.cached.json';
-		file_put_contents($path, '{"# version #": 2, "variable": "2"}');
-		$this->translator->invalidate();
-		$t = $this->translator->translate('web.pages.homepage.cached.variable');
-		Assert::same('2', $t);
+		Assert::null($this->translator->translate('web.pages.homepage.simple.title'));
 	}
 
 }
