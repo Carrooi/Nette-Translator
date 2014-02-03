@@ -52,77 +52,43 @@ class Translator extends DKTranslator implements ITranslator
 
 	/**
 	 * @param string $path
-	 * @param string $categoryName
-	 * @return array
+	 * @param string $name
+	 * @param string $language
+	 * @return string
 	 */
-	protected function load($path, $categoryName)
+	public function _getCachedCategoryName($path, $name, $language)
 	{
-		if ($this->cache === null) {
-			return parent::load($path, $categoryName);
-		} else {
-			$language = $this->getLanguage();
-			$data = $this->cache->load($language. ':'. $categoryName);
-
-			if ($data === null) {
-				$data = parent::load($path, $categoryName);
-				$conds = array();
-				if (!isset($data['# version #'])) {
-					$conds[Cache::FILES] = $path;
-				}
-				$this->cache->save($language. ':'. $categoryName, $data, $conds);
-			} elseif (isset($data['# version #'])) {
-				$file = $this->loadFromFile($path);
-				if (!isset($file['# version #']) || $data['# version #'] !== $file['# version #']) {
-					$data = $this->normalizeTranslations($file);
-					$this->cache->save($language. ':'. $categoryName, $data);
-				}
-			}
-
-			return $data;
-		}
+		return $language. ':'. $path. '/'. $name;
 	}
 
 
 	/**
-	 * @param array $translations
+	 * @param string $path
+	 * @param string $name
+	 * @param null|string $language
 	 * @return array
 	 */
-	protected function normalizeTranslations($translations)
+	public function _loadCategory($path, $name, $language = null)
 	{
-		$result = array();
-		foreach ($translations as $name => $translation) {
-			$list = false;
-			if (preg_match('~^--\s(.*)~', $name, $match)) {
-				$name = $match[1];
-				$list = true;
-			}
-			if ($name === '# version #') {
-				$result[$name] = $translation;
-			} elseif (is_string($translation)) {
-				$result[$name] = [$translation];
-			} elseif (is_array($translation)) {
-				$result[$name] = array();
-				foreach ($translation as $t) {
-					if (is_array($t)) {
-						$buf = array();
-						foreach ($t as $sub) {
-							if (!preg_match('~^\#.*\#$~', $sub)) {
-								$buf[] = $sub;
-							}
-						}
-						$result[$name][] = $buf;
-					} else {
-						if (!preg_match('~^\#.*\#$~', $t)) {
-							if ($list === true && !is_array($t)) {
-								$t = array($t);
-							}
-							$result[$name][] = $t;
-						}
-					}
-				}
-			}
+		if ($language === null) {
+			$language = $this->getLanguage();
 		}
-		return $result;
+
+		if ($this->cache === null) {
+			return parent::_loadCategory($path, $name, $language);
+		}
+
+		$cachedName = $this->_getCachedCategoryName($path, $name, $language);
+		$data = $this->cache->load($cachedName);
+
+		if ($data === null) {
+			$data = parent::_loadCategory($path, $name, $language);
+			$this->cache->save($cachedName, $data, array(
+				Cache::FILES => array($this->getLoader()->getFileSystemPath($path, $name, $language))
+			));
+		}
+
+		return $data;
 	}
 
 }
