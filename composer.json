@@ -3,7 +3,7 @@
 	"type": "library",
 	"description": "Translator for Nette framework",
 	"keywords": ["translator", "localization", "i18n", "nette"],
-	"homepage": "https://github.com/sakren/php-nette-translator",
+	"homepage": "https://github.com/sakren/nette-translator",
 	"license": "MIT",
 	"authors": [
 		{
