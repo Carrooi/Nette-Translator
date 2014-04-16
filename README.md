@@ -18,9 +18,30 @@ php composer.phar require sakren/nette-translator
 
 ## Usage
 
+You can enable this package in your neon configuration.
+
 ```
-$translator = new \DK\NetteTranslator\Translator(__DIR__. '/path/to/my/dictionaries');
-$translator->setLanguage('en');
+extensions:
+	translator: DK\NetteTranslator\TranslatorExtension
+```
+
+or if you are using Nette < 2.1 put this into your bootstrap.php:
+
+```
+DK\NetteTranslator\TranslatorExtension::register($configurator);
+```
+
+## Configuration
+
+config.neon:
+
+```
+translator:
+	directory: /path/to/my/dictionaries		# required
+	language: en							# required
+	caching: true							# this will just use cacheStorage service registered in you DI
+	replacements:							# list of replacements
+		name: This is name of my website
 ```
 
 ## Caching
