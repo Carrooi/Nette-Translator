@@ -6,7 +6,7 @@ use DK\Translator\Translator as DKTranslator;
 use Nette\Localization\ITranslator;
 use Nette\Caching\IStorage;
 use Nette\Caching\Cache;
-use Nette\Utils\Html;
+use Nette\Http\IRequest;
 
 /**
  *
@@ -18,6 +18,32 @@ class Translator extends DKTranslator implements ITranslator
 
 	/** @var \Nette\Caching\Cache */
 	private $cache;
+
+	/** @var bool  */
+	private $debugMode = false;
+
+
+	/**
+	 * @param \DK\Translator\Loaders\Loader|string $pathOrLoader
+	 * @param \Nette\Http\IRequest $httpRequest
+	 */
+	public function __construct($pathOrLoader, IRequest $httpRequest = null)
+	{
+		parent::__construct($pathOrLoader);
+
+		if ($httpRequest !== null) {
+			$this->debugMode = (bool) $httpRequest->getCookie(Panel::COOKIE_DEBUG_KEY);
+		}
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isDebugMode()
+	{
+		return $this->debugMode;
+	}
 
 
 	/**
