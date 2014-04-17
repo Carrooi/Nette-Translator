@@ -59,7 +59,7 @@ protected function createTemplate($class = null)
 ## Changelog
 
 * 1.2.1
-	+ Added "debug" mode
+	+ Added "debug" mode for template translations
 
 * 1.2.0
 	+ Added debug panel
