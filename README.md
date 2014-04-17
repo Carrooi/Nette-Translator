@@ -58,6 +58,9 @@ protected function createTemplate($class = null)
 
 ## Changelog
 
+* 1.2.1
+	+ Added "debug" mode for template translations
+
 * 1.2.0
 	+ Added debug panel
 	+ Translations from templates are wrapped in Nette\Utils\Html object
