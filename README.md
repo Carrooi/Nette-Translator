@@ -18,30 +18,49 @@ php composer.phar require sakren/nette-translator
 
 ## Usage
 
-```
-$translator = new \DK\NetteTranslator\Translator(__DIR__. '/path/to/my/dictionaries');
-$translator->setLanguage('en');
-```
-
-## Caching
-
-Turning on cache will make loading your dictionaries faster. They don't need to be parsed in any way, because parsed version
-is already in cache.
-
-This translator uses cache from Nette framework.
+You can enable this package in your neon configuration.
 
 ```
-$fileJournal = new \Nette\Caching\Storages\FileJournal(__DIR__. '/path/to/cache');
-$fileStorage = new \Nette\Caching\Storages\FileStorage(__DIR__. '/path/to/cache');
-
-$translator->setCacheStorage($fileStorage);
-
-// or directly
-
-$translator->setCache($myOwnInstanceOfCache);
+extensions:
+	translator: DK\NetteTranslator\TranslatorExtension
 ```
+
+## Configuration
+
+config.neon:
+
+```
+translator:
+	directory: /path/to/my/dictionaries		# required
+	language: en							# required
+	caching: true							# this will just use cacheStorage service registered in you DI
+	debugger: true							# adds debug panel
+	replacements:							# list of replacements
+		name: This is name of my website
+```
+
+## Templates
+
+The only thing you need to do is register translator's helper loader in your BasePresenter or BaseControl.
+
+```
+protected function createTemplate($class = null)
+{
+	$template = parent::createTemplate();
+
+	$template->registerHelperLoader(callback($this->translator->createTemplateHelpers(), 'loader'));
+
+	return $template;
+}
+```
+
+**All translations in templates will be returned as Nette\Utils\Html object.**
 
 ## Changelog
+
+* 1.2.0
+	+ Added debug panel
+	+ Translations from templates are wrapped in Nette\Utils\Html object
 
 * 1.1.0
 	+ See changelog of [php-translator]() to see rest of changes (https://github.com/sakren/php-translator#changelog) (version 1.5.0 - 1.6.1)
