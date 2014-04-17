@@ -6,6 +6,7 @@ use DK\Translator\Translator as DKTranslator;
 use Nette\Localization\ITranslator;
 use Nette\Caching\IStorage;
 use Nette\Caching\Cache;
+use Nette\Utils\Html;
 
 /**
  *
@@ -89,6 +90,15 @@ class Translator extends DKTranslator implements ITranslator
 		}
 
 		return $data;
+	}
+
+
+	/**
+	 * @return \DK\NetteTranslator\TemplateHelpers
+	 */
+	public function createTemplateHelpers()
+	{
+		return new TemplateHelpers($this);
 	}
 
 }

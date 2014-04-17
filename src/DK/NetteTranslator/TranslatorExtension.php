@@ -42,12 +42,20 @@ class TranslatorExtension extends CompilerExtension
 			$translator->addSetup('addReplacement', array($name, $value));
 		}
 
+		$builder->addDefinition($this->prefix('helpers'))
+			->setClass('DK\NetteTranslator\TemplateHelpers')
+			->setFactory($this->prefix('@translator'). '::createTemplateHelpers')
+			->setInject(false);
+
 		if ($config['debugger']) {
 			$builder->addDefinition($this->prefix('panel'))
 				->setClass('DK\NetteTranslator\Panel')
 				->addSetup('register')
 				->addTag('run');
 		}
+
+		$builder->getDefinition('nette.latte')
+			->addSetup('DK\NetteTranslator\Macros::install(?->compiler)', array('@self'));
 	}
 
 

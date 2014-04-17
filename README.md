@@ -44,6 +44,23 @@ translator:
 		name: This is name of my website
 ```
 
+## Templates
+
+The only thing you need to do is register translator's helper loader in your BasePresenter or BaseControl.
+
+```
+protected function createTemplate($class = null)
+{
+	$template = parent::createTemplate();
+
+	$template->registerHelperLoader(callback($this->translator->createTemplateHelpers(), 'loader'));
+
+	return $template;
+}
+```
+
+**All translations in templates will be returned as Nette\Utils\Html object.**
+
 ## Changelog
 
 * 1.1.0
