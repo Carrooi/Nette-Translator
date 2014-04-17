@@ -1,0 +1,208 @@
+<?php
+
+/**
+ * @var $translator \DK\NetteTranslator\Translator
+ *
+ * @var $link string
+ *
+ * @var $xhrHeader string
+ *
+ * @var $ajaxActionKey string
+ * @var $ajaxMessageKey string
+ * @var $ajaxTranslationKey string
+ *
+ * @var $ajaxActionLoad string
+ * @var $ajaxActionEdit string
+ *
+ * @var $checkMessage callable
+ *
+ * @var $hasUntranslated bool
+ * @var $hasTranslated bool
+ *
+ * @author David Kudera
+ */
+
+?>
+
+<h1>Translator</h1>
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<div id="dkTranslatorMessages" style="max-height: 400px; padding-right: 20px; overflow: hidden; overflow-x: hidden; overflow-y: auto;">
+					<?php
+					if ($hasUntranslated) {
+						?>
+						<h2>Untranslated</h2>
+						<table>
+							<tbody>
+								<?php
+								foreach ($translator->getUntranslated() as $name) {
+									?>
+									<tr>
+										<td>
+											<a href="#"<?php if (!$checkMessage($name)) { echo ' style="background-color: red; padding: 2px 5px 2px 5px; color: #FDF5CE;" title="Invalid message name" data-invalid '; } ?>><?php echo $name; ?></a>
+										</td>
+									</tr>
+								<?php
+								}
+								?>
+							</tbody>
+						</table>
+					<?php
+					}
+					if ($hasTranslated) {
+						?>
+						<h2>Translated</h2>
+						<table>
+							<tbody>
+								<?php
+								foreach ($translator->getTranslated() as $name) {
+									?>
+									<tr>
+										<td>
+											<a href="#"><?php echo $name; ?></a>
+										</td>
+									</tr>
+								<?php
+								}
+								?>
+							</tbody>
+						</table>
+					<?php
+					}
+					?>
+				</div>
+			</td>
+			<td>
+				<div id="dkTranslatorVariants">
+					<?php
+					$forms = $translator->getPluralForms()[$this->translator->getLanguage()]['count'];
+
+					for ($i = 0; $i < $forms; $i++) {
+						switch ($i) {
+							case 0: echo '<h2>1<sup>st</sup> form</h2>'; break;
+							case 1: echo '<h2>2<sup>nd</sup> form</h2>'; break;
+							case 2: echo '<h2>3<sup>rd</sup> form</h2>'; break;
+							default: echo '<h2>'. $i. '<sup>th</sup> form</h2>'; break;
+						}
+						?>
+
+						<textarea cols="100" rows="4" style="background-color: white; border: 1px solid #E6DFBF;"></textarea><br><br>
+
+						<?php
+					}
+					?>
+				</div>
+				<div style="float: right;">
+					<span id="dkTranslatorInfo"></span>
+					<input type="button" id="dkTranslatorSubmitBtn" value="Save" style="display: none; border: 1px solid #E6DFBF; padding: 3px 10px 3px 10px; margin-bottom: 3px; background-color: #E6DFBF;">
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<script type="text/javascript">
+	(function() {
+
+		var link = '<?php echo $link; ?>';
+
+		var editing = null;
+		var infoTimeout = null;
+
+		var button = document.getElementById('dkTranslatorSubmitBtn');
+		var info = document.getElementById('dkTranslatorInfo');
+		var variants = document.getElementById('dkTranslatorVariants').getElementsByTagName('textarea');
+		var messages = document.getElementById('dkTranslatorMessages').getElementsByTagName('a');
+
+		var ajax = function(action, data, fn) {
+			var xhr = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest;
+
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4) {
+					if (xhr.status == 200) {
+						if (xhr.responseText === '') {
+							fn();
+						} else {
+							fn(JSON.parse(xhr.responseText));
+						}
+					} else {
+						alert('Some error occurred during communication with your server.');
+					}
+				}
+			};
+
+			data['<?php echo $ajaxActionKey; ?>'] = action;
+
+			xhr.open('POST', <?php echo json_encode($link); ?>, true);
+			xhr.setRequestHeader('<?php echo $xhrHeader; ?>', 'devel');
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.send(JSON.stringify(data));
+		};
+
+		var loadTranslation = function(message, fn) {
+			ajax('<?php echo $ajaxActionLoad; ?>', {'<?php echo $ajaxMessageKey; ?>': message}, function(data) {
+				if (button.style.display === 'none') {
+					button.style.display = 'inline';
+				}
+
+				editing = message;
+				fn(data.translation);
+			});
+		};
+
+		var saveTranslation = function(message, translation, fn) {
+			ajax('<?php echo $ajaxActionEdit; ?>', {
+				'<?php echo $ajaxMessageKey; ?>': message,
+				'<?php echo $ajaxTranslationKey; ?>': translation
+			}, fn);
+		};
+
+		var showInfo = function(message) {
+			if (infoTimeout !== null) {
+				clearTimeout(infoTimeout);
+			}
+
+			info.innerHTML = message;
+
+			setTimeout(function() {
+				info.innerHTML = '';
+			}, 1500);
+		};
+
+		for (var i = 0; i < messages.length; i++) {
+			(function(message) {
+				message.onclick = function(e) {
+					if (message.hasAttribute('data-invalid')) {
+						alert('Please put this translation into your dictionary first.');
+					} else {
+						loadTranslation(message.innerHTML, function(translation) {
+							for (var j = 0; j < variants.length; j++) {
+								if (typeof translation[j] !== 'undefined') {
+									variants[j].value = translation[j];
+								}
+							}
+						});
+					}
+
+					e.preventDefault();
+				};
+			})(messages[i]);
+		}
+
+		button.onclick = function() {
+			var translation = [];
+			for (var i = 0; i < variants.length; i++) {
+				if (variants[i].value !== '') {
+					translation.push(variants[i].value);
+				}
+			}
+
+			saveTranslation(editing, translation, function() {
+				showInfo('Saved!');
+			});
+		};
+
+	}).call(window);
+</script>
