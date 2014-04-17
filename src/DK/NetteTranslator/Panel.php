@@ -32,6 +32,9 @@ class Panel extends Object implements IBarPanel
 	const AJAX_ACTION_EDIT = 'edit';
 
 
+	const COOKIE_DEBUG_KEY = 'dk-translator-debug';
+
+
 	/** @var \Nette\Application\Application  */
 	private $application;
 
@@ -146,6 +149,8 @@ class Panel extends Object implements IBarPanel
 
 		$ajaxActionLoad = self::AJAX_ACTION_LOAD;
 		$ajaxActionEdit = self::AJAX_ACTION_EDIT;
+
+		$cookieDebugKey = self::COOKIE_DEBUG_KEY;
 
 		$checkMessage = function($message) {
 			return preg_match('/^[a-zA-Z0-9._]+$/', $message) > 0;

@@ -62,6 +62,10 @@ class TemplateHelpers extends Object
 			return $result;
 		}
 
+		if ($this->translator->isDebugMode()) {
+			$result .= ' <small><i>('. $message. ')</i></small>';
+		}
+
 		return Html::el()->setHtml($result)->style(array('color' => 'red'));
 	}
 
