@@ -35,6 +35,8 @@ translator:
 	language: en							# required
 	caching: true							# this will just use cacheStorage service registered in you DI
 	debugger: true							# adds debug panel
+	debuggerGroups:							# list of custom groups with translations in debug panel
+		Menu: ^menu\.						# all translations with "menu." in beginning will be in "Menu" group
 	replacements:							# list of replacements
 		name: This is name of my website
 ```
@@ -57,6 +59,9 @@ protected function createTemplate($class = null)
 **All translations in templates will be returned as Nette\Utils\Html object.**
 
 ## Changelog
+
+* 1.3.1
+	+ Added groups into debug panel
 
 * 1.3.0
 	+ Optimizations
