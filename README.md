@@ -58,6 +58,10 @@ protected function createTemplate($class = null)
 
 ## Changelog
 
+* 1.3.0
+	+ Optimizations
+	+ Added [helpers](https://github.com/sakren/php-translator#helpers)
+
 * 1.2.1
 	+ Added "debug" mode for template translations
 
