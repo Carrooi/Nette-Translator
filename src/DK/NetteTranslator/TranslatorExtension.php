@@ -5,7 +5,6 @@ namespace DK\NetteTranslator;
 use Nette\DI\CompilerExtension;
 use Nette\Configurator;
 use Nette\DI\Compiler;
-use Nette\Diagnostics\Debugger;
 
 /**
  *
@@ -21,6 +20,7 @@ class TranslatorExtension extends CompilerExtension
 		'language' => 'en',
 		'caching' => false,
 		'debugger' => false,
+		'debuggerGroups' => array(),
 		'replacements' => array(),
 	);
 
@@ -48,10 +48,14 @@ class TranslatorExtension extends CompilerExtension
 			->setInject(false);
 
 		if ($config['debugger']) {
-			$builder->addDefinition($this->prefix('panel'))
+			$panel = $builder->addDefinition($this->prefix('panel'))
 				->setClass('DK\NetteTranslator\Panel')
 				->addSetup('register')
 				->addTag('run');
+
+			foreach ($config['debuggerGroups'] as $name => $pattern) {
+				$panel->addSetup('addGroup', array($name, $pattern));
+			}
 		}
 
 		$builder->getDefinition('nette.latte')
