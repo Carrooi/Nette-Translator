@@ -18,8 +18,7 @@
  *
  * @var $checkMessage callable
  *
- * @var $hasUntranslated bool
- * @var $hasTranslated bool
+ * @var $groups array
  *
  * @author David Kudera
  */
@@ -34,13 +33,14 @@
 			<td>
 				<div id="dkTranslatorMessages" style="max-height: 400px; padding-right: 20px; overflow: hidden; overflow-x: hidden; overflow-y: auto;">
 					<?php
-					if ($hasUntranslated) {
+					foreach ($groups as $name => $group) {
 						?>
-						<h2>Untranslated</h2>
-						<table>
-							<tbody>
+						<div>
+							<h2><a href="#" class="dk-translator-group-toggle"><?php echo $name. ' ('. count($group['data']). ')'; ?></a></h2>
+							<table<?php if ($group['collapsed']) { echo ' style="display: none;"'; } ?>>
+								<tbody>
 								<?php
-								foreach ($translator->getUntranslated() as $name) {
+								foreach ($group['data'] as $name) {
 									?>
 									<tr>
 										<td>
@@ -50,29 +50,10 @@
 								<?php
 								}
 								?>
-							</tbody>
-						</table>
-					<?php
-					}
-					if ($hasTranslated) {
-						?>
-						<h2>Translated</h2>
-						<table>
-							<tbody>
-								<?php
-								foreach ($translator->getTranslated() as $name) {
-									?>
-									<tr>
-										<td>
-											<a href="#"><?php echo $name; ?></a>
-										</td>
-									</tr>
-								<?php
-								}
-								?>
-							</tbody>
-						</table>
-					<?php
+								</tbody>
+							</table>
+						</div>
+						<?php
 					}
 					?>
 				</div>
@@ -165,6 +146,7 @@
 		var debug = document.getElementById('dkTranslatorDebug');
 		var variants = document.getElementById('dkTranslatorVariants').getElementsByTagName('textarea');
 		var messages = document.getElementById('dkTranslatorMessages').getElementsByTagName('a');
+		var groups = document.getElementById('dkTranslatorMessages').getElementsByClassName('dk-translator-group-toggle');
 
 		var ajax = function(action, data, fn) {
 			var xhr = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest;
@@ -267,6 +249,19 @@
 
 			e.preventDefault();
 		};
+
+		for (var i = 0; i < groups.length; i++) {
+			(function(link) {
+				link.onclick = function(e) {
+					var table = link.parentNode.parentNode.getElementsByTagName('table')[0];
+					var display = table.style.display;
+
+					table.style.display = (display === 'block' || display === '') ? 'none' : 'block';
+
+					e.preventDefault();
+				};
+			})(groups[i]);
+		}
 
 	}).call(window);
 </script>

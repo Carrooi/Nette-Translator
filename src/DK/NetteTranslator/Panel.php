@@ -41,6 +41,9 @@ class Panel extends Object implements IBarPanel
 	/** @var \DK\NetteTranslator\Translator  */
 	private $translator;
 
+	/** @var array */
+	private $groups = array();
+
 	/** @var \Nette\Http\Request  */
 	private $httpRequest;
 
@@ -63,6 +66,19 @@ class Panel extends Object implements IBarPanel
 
 		$this->processRequest();
 	}
+
+
+	/**
+	 * @param string $name
+	 * @param string $pattern
+	 * @return \DK\NetteTranslator\Panel
+	 */
+	public function addGroup($name, $pattern)
+	{
+		$this->groups[$name] = $pattern;
+		return $this;
+	}
+
 
 	private function processRequest()
 	{
@@ -130,10 +146,43 @@ class Panel extends Object implements IBarPanel
 	 */
 	public function getPanel()
 	{
-		$hasUntranslated = count($this->translator->getUntranslated()) > 0;
-		$hasTranslated = count($this->translator->getTranslated()) > 0;
+		$groups = array();
+		$empty = true;
 
-		if (!$hasUntranslated && !$hasTranslated) {
+		$translated = $this->translator->getTranslated();
+
+		foreach ($this->groups as $name => $pattern) {
+			$group = array();
+			$translated = array_filter($translated, function($translation) use (&$group, $pattern) {
+				if (preg_match('/'. $pattern. '/', $translation)) {
+					$group[] = $translation;
+					return false;
+				} else {
+					return true;
+				}
+			});
+
+			if ($empty && !empty($group)) {
+				$empty = false;
+			}
+
+			$groups[$name] = array(
+				'collapsed' => true,
+				'data' => $group,
+			);
+		}
+
+		$groups['Untranslated'] = array(
+			'collapsed' => false,
+			'data' => $this->translator->getUntranslated(),
+		);
+
+		$groups['Translated'] = array(
+			'collapsed' => false,
+			'data' => $translated,
+		);
+
+		if (count($groups['Untranslated']['data']) === 0 && count($groups['Translated']['data']) === 0 && $empty) {
 			return null;
 		}
 
