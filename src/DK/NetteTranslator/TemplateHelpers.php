@@ -57,13 +57,14 @@ class TemplateHelpers extends Object
 	public function translate($message, $count = null, array $args = array())
 	{
 		$result = $this->translator->translate($message, $count, $args);
+		$last = $this->translator->getLastTranslated();
 
-		if ($result === $message && !$this->translator->hasTranslation($message)) {
+		if (!$last) {
 			return $result;
 		}
 
 		if ($this->translator->isDebugMode()) {
-			$result .= ' <small><i>('. $message. ')</i></small>';
+			$result .= ' <small><i>('. $last. ')</i></small>';
 		}
 
 		return Html::el()->setHtml($result)->style(array('color' => 'red'));
