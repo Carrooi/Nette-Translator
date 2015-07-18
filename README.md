@@ -1,12 +1,20 @@
-[![Build Status](https://travis-ci.org/sakren/nette-translator.png?branch=master)](https://travis-ci.org/sakren/nette-translator)
+[![Build Status](https://img.shields.io/travis/Carrooi/Nette-Translator.svg?style=flat-square)](https://travis-ci.org/Carrooi/Nette-Translator)
 
-[![Donate](http://b.repl.ca/v1/donate-PayPal-brightgreen.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S3EYEQST8ZD5Y)
+[![Donate](https://img.shields.io/badge/donate-PayPal-brightgreen.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S3EYEQST8ZD5Y)
 
 # nette-translator
 
 This translator is just extended version of [sakren/translator](https://github.com/sakren/php-translator) for Nette framework.
 
-For full documentation, look [here](https://github.com/sakren/php-translator/blob/master/README.md).
+For full documentation, look [here](https://github.com/Carrooi/Php-Translator/blob/master/README.md).
+
+## Help
+
+Unfortunately I don't have any more time to maintain this repository :-( 
+
+Don't you want to save me and this project by taking over it?
+
+![sad cat](https://raw.githubusercontent.com/sakren/sakren.github.io/master/images/sad-kitten.jpg)
 
 ## Installation
 
@@ -59,6 +67,10 @@ protected function createTemplate($class = null)
 **All translations in templates will be returned as Nette\Utils\Html object.**
 
 ## Changelog
+
+* 1.3.2
+	+ Move under Carrooi organization
+	+ Abandon package
 
 * 1.3.1
 	+ Added groups into debug panel
